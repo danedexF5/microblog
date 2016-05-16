@@ -2,13 +2,12 @@ import spark.ModelAndView;
 import spark.Spark;
 import spark.template.mustache.MustacheTemplateEngine;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static spark.Spark.halt;
 
 public class Main {
-    static ArrayList<Message> messages = new ArrayList<>();
+
 
     public static void main(String[] args) {
 
@@ -25,8 +24,9 @@ public class Main {
                         // get the user from the session
 
                         // place the user into the model HashMap
-                        modelMap.put("user", request.session().attribute("user"));
-                        modelMap.put("messages", messages);
+                        User user = request.session().attribute("user");
+                        modelMap.put("user", user);
+                        modelMap.put("messages", user.getMessages());
                         // return a ModelAndView for the messages template
                         return new ModelAndView(modelMap, "messages.mustache");
                     }
@@ -66,14 +66,16 @@ public class Main {
         Spark.post(
                 "/create-message",
                 (request, response) -> {
+
                     // get the user from the session
-                    request.session().attribute("user");
+                    User user = request.session().attribute("user");
                     // get the submitted message text from the request's queryParams
                     String message = request.queryParams("message");
                     // Create a new message for submitted message text
                     Message newMessage = new Message(message);
                     // add the new message to the user's array of messages
-                    messages.add(newMessage);
+                    user.getMessages().add(newMessage);
+
                     // redirect to the webroot, /
                     response.redirect("/");
                     // halt this request
