@@ -50,7 +50,7 @@ public class Main {
                     // get the loginName value from the request's queryParams
                     String name = request.queryParams("loginName");
                     // create a new instance of a User for the loginName
-                    User user = new User(request.queryParams("loginName"));
+                    User user = new User(name);
                     // Add the user into the session
                     request.session().attribute("user", user);
 
